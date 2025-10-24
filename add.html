@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Add a Recipe — My Cookbook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="brand"><div class="brand-badge">🍽</div><div>Cookbook</div></div>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="search.html">Find Recipes</a>
+      <a href="help.html">Help</a>
+    </nav>
+  </header>
+
+  <main class="narrow">
+    <h1>Add a New Recipe</h1>
+    <p><a href="index.html">← Back to recipes</a></p>
+
+    <form>
+      <label for="title">Recipe Title:</label>
+      <input type="text" id="title" name="title" placeholder="e.g. Lemon Pasta" required>
+
+      <label for="category">Category:</label>
+      <select id="category" name="category" required>
+        <option value="">-- Choose one --</option>
+        <option value="Poultry">Poultry</option>
+        <option value="Beef">Beef</option>
+        <option value="Seafood">Seafood</option>
+        <option value="Vegetarian">Vegetarian</option>
+      </select>
+
+      <label for="description">Short Description:</label>
+      <textarea id="description" name="description" rows="3" placeholder="Quick summary..."></textarea>
+
+      <label for="cook_time">Cook Time (minutes):</label>
+      <input type="number" id="cook_time" name="cook_time" min="1" step="1">
+
+      <label for="servings">Servings:</label>
+      <input type="number" id="servings" name="servings" min="1" step="1">
+
+      <p style="margin-top:12px;">
+        <button type="button" disabled>Submit (planning only)</button>
+      </p>
+    </form>
+  </main>
+</body>
+</html>

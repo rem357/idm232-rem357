@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cookbook — Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="brand"><div class="brand-badge">🍽</div><div>Cookbook</div></div>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="search.html">Find Recipes</a>
+      <a href="help.html">Help</a>
+      <a href="add.html">Add Recipe</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="row">
+      <div>
+        <h2>Hello There</h2>
+        <p>Alpha prototype (planning only). Static preview of pages and styling.</p>
+      </div>
+      <form class="search" action="search.html" method="get">
+        <input type="text" name="q" placeholder="Search anything (planning only)" />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="section">
+    <h3>Featured recipes (static)</h3>
+    <div class="chips">
+      <a class="chip" href="search.html?cat=Poultry">Poultry</a>
+      <a class="chip" href="search.html?cat=Beef">Beef</a>
+      <a class="chip" href="search.html?cat=Seafood">Seafood</a>
+      <a class="chip" href="search.html?cat=Vegetarian">Vegetarian</a>
+      <a class="chip" href="search.html?cat=all">All</a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <article class="card">
+      <h4 class="title">Ancho-Orange Chicken with Kale Rice</h4>
+      <p class="meta">Poultry · 38 min · Advanced</p>
+      <p>Smoky ancho glaze + orange. Roasted carrots & creamy kale rice.</p>
+      <p><a class="btn" href="recipe.html">View recipe</a></p>
+    </article>
+
+    <article class="card">
+      <h4 class="title">Beef Medallions & Mushroom Sauce</h4>
+      <p class="meta">Beef · 35 min · Moderate</p>
+      <p>Pan-seared beef with a rich mushroom pan sauce and fluffy mash.</p>
+      <p><a class="btn" href="recipe.html">View recipe</a></p>
+    </article>
+
+    <!-- add more static cards if you like -->
+  </div>
+
+  <footer>© 2025 Cookbook • planning prototype</footer>
+</body>
+</html>

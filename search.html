@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>My Cookbook — Filter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="brand"><div class="brand-badge">🍽</div><div>Cookbook</div></div>
+    <nav class="links">
+      <a href="index.html" class="btn secondary">← Home</a>
+      <a href="search.html">Find Recipes</a>
+      <a href="help.html">Help</a>
+    </nav>
+  </header>
+
+  <header class="section" style="margin-top:0;">
+    <h1 style="margin:0; font-size:20px;">Find Recipes</h1>
+  </header>
+
+  <form class="search" action="search.html" method="get" style="margin-bottom: 12px;">
+    <input type="text" name="q" placeholder="Keyword (planning only)" />
+    <select name="cat">
+      <option>all</option>
+      <option>Poultry</option>
+      <option>Beef</option>
+      <option>Seafood</option>
+      <option>Vegetarian</option>
+    </select>
+    <button type="submit">Apply</button>
+    <a class="btn secondary" href="search.html">Reset</a>
+  </form>
+
+  <p>Showing “<strong>chicken</strong>” in <strong>Poultry</strong> (example)</p>
+
+  <div class="grid">
+    <article class="card">
+      <h3 class="title" style="margin:0 0 6px;">Ancho-Orange Chicken with Kale Rice</h3>
+      <p class="meta">Poultry · 38 min · Advanced</p>
+      <p>Smoky ancho glaze + orange. Roasted carrots & creamy kale rice.</p>
+      <p style="margin-top:10px;"><a class="btn" href="recipe.html">View recipe</a></p>
+    </article>
+
+    <!-- duplicate a few result cards if you want -->
+  </div>
+
+  <p class="pill" style="margin-top:12px;">
+    Want to show the “no results” state? <a href="no-results.html" class="btn" style="margin-left:8px;">Open No Results</a>
+  </p>
+</body>
+</html>
