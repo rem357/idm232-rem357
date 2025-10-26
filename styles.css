@@ -13,7 +13,6 @@
   --accent-2:   #ffd6e7;
   --chip:       #f3f6ff;
 
-  /* Card width for flex layout */
   --card-w: 260px;
 
   /* Sizing  */
@@ -38,6 +37,11 @@
   --shadow-sm:  0 4px 10px rgba(0,0,0,.06);
   --shadow-md:  0 10px 20px rgba(92,124,255,.10);
   --shadow-lg:  0 12px 18px rgba(0,0,0,.10);
+
+  --brand-fs: clamp(24px, 2.6vw, 32px);  
+  --brand-badge: clamp(48px, 5vw, 64px); 
+  --brand-gap: 12px;               
+
 }
 
 /*  Reset */
@@ -91,7 +95,7 @@ header.site {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-weight: 800;
+  font-weight: 1000;
   font-size: var(--fs-md);
 }
 
@@ -103,8 +107,15 @@ header.site {
   border-radius: var(--radius-md);
   background: var(--accent);
   color: #fff;
-  font-weight: 800;
+  font-weight: 1000;
   box-shadow: var(--shadow-md);
+}
+
+.brand,
+.brand:hover,
+.brand:focus {
+  text-decoration: none !important;
+  color: inherit;
 }
 
 nav.links {
