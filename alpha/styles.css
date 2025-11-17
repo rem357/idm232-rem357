@@ -167,41 +167,8 @@ form.search {
   gap: var(--space-2);
   flex-wrap: wrap;
 }
-input[type="text"],
-select,
-button,
-textarea {
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: #fff;
-}
 
-button {
-  cursor: pointer;
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  box-shadow: 0 8px 16px rgba(92,124,255,.18);
-}
-button:hover { filter: brightness(0.97); }
 
-form.search {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: nowrap;          
-  width: min(600px, 100%);   
-}
-
-form.search input[type="text"] {
-  flex: 1 1 320px;           
-  min-width: 0;               
-}
-
-form.search button {
-  line-height: 1;             
-}
 
 /*  (category / tags) */
 .chips {
