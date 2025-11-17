@@ -1,97 +1,87 @@
 <?php
-// same pretend “database”
-$recipes = [
-  [
-    "id" => 1,
-    "title" => "Ancho-Orange Chicken with Kale Rice & Roasted Carrots",
-    "category" => "Poultry",
-    "description" => "Smoky ancho glaze + orange. Roasted carrots & creamy kale rice.",
-    "ingredients" => [
-      "4 Boneless, Skinless Chicken Breasts",
-      "1 Tbsp Ancho Chile Paste",
-      "2 Tbsps Crème Fraîche",
-      "3 Tbsps Golden Raisins",
-      "¾ Cup Jasmine Rice",
-      "Kale, Carrots, Garlic, Orange, Limes"
-    ],
-    "steps" => [
-      "Preheat oven to 450°F; prep produce and make glaze.",
-      "Cook rice; sauté kale with garlic; mix into rice.",
-      "Sear chicken and glaze until cooked through.",
-      "Serve with roasted carrots; finish rice with crème fraîche and raisins."
-    ],
-    "cook_time_min" => 38,
-    "difficulty" => "Advanced",
-    "servings" => "2"
-  ],
-  [
-    "id" => 2,
-    "title" => "Beef Medallions & Mushroom Sauce with Mashed Potatoes",
-    "category" => "Beef",
-    "description" => "Pan-seared beef with a rich mushroom pan sauce and fluffy mash.",
-    "ingredients" => [
-      "Beef Medallions",
-      "Cremini Mushrooms",
-      "Yukon Gold Potatoes",
-      "Butter, Garlic, Stock, Cream"
-    ],
-    "steps" => [
-      "Boil potatoes; mash with butter and cream.",
-      "Sear beef; rest.",
-      "Sauté mushrooms; deglaze to make pan sauce.",
-      "Plate beef, spoon sauce, serve with mash."
-    ],
-    "cook_time_min" => 35,
-    "difficulty" => "Moderate",
-    "servings" => "2"
-  ],
-];
+// 1. Connect to the database
+require 'connection.php';
 
+// 2. Get the recipe ID from the URL
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$recipe = null;
-foreach ($recipes as $r) {
-  if ($r['id'] === $id) { $recipe = $r; break; }
+
+if ($id <= 0) {
+  http_response_code(404);
+  echo "Invalid recipe ID. <a href='index.php'>Back</a>";
+  exit;
 }
-if (!$recipe) {
+
+// 3. Query the database for THIS recipe
+$sql = "SELECT * FROM recipes WHERE id = $id LIMIT 1";
+$result = mysqli_query($conn, $sql);
+
+if (!$result || mysqli_num_rows($result) === 0) {
   http_response_code(404);
   echo "Recipe not found. <a href='index.php'>Back</a>";
   exit;
 }
+
+// 4. Turn the row into a PHP array
+$recipe = mysqli_fetch_assoc($result);
+
+// Convert long text fields into arrays for ingredients + steps
+$ingredients = array_filter(array_map('trim', explode("\n", $recipe['ingredients'])));
+$steps = array_filter(array_map('trim', explode("\n", $recipe['steps'])));
 ?>
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title><?= htmlspecialchars($recipe['title']) ?> — My Cookbook</title>
-  <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 20px; max-width: 900px; }
-    .badges span { display:inline-block; padding:4px 8px; border:1px solid #ddd; border-radius:999px; margin-right:6px; font-size: 13px; color:#444; }
-    ul { line-height: 1.5; }
-  </style>
+  <title><?= htmlspecialchars($recipe['title']) ?> — Cookbook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
+
   <p><a href="index.php">← Back to recipes</a></p>
+
   <h1><?= htmlspecialchars($recipe['title']) ?></h1>
+
   <div class="badges">
     <span><?= htmlspecialchars($recipe['category']) ?></span>
-    <span><?= (int)$recipe['cook_time_min'] ?> min</span>
-    <span><?= htmlspecialchars($recipe['difficulty']) ?></span>
-    <span><?= htmlspecialchars($recipe['servings']) ?> servings</span>
+    <?php if (!empty($recipe['cook_time'])): ?>
+      <span><?= htmlspecialchars($recipe['cook_time']) ?></span>
+    <?php endif; ?>
+    <?php if (!empty($recipe['difficulty'])): ?>
+      <span><?= htmlspecialchars($recipe['difficulty']) ?></span>
+    <?php endif; ?>
+    <?php if (!empty($recipe['servings'])): ?>
+      <span><?= htmlspecialchars($recipe['servings']) ?> servings</span>
+    <?php endif; ?>
   </div>
-  <p><?= htmlspecialchars($recipe['description']) ?></p>
 
-  <h2>Ingredients</h2>
-  <ul>
-    <?php foreach ($recipe['ingredients'] as $line): ?>
-      <li><?= htmlspecialchars($line) ?></li>
-    <?php endforeach; ?>
-  </ul>
+  <?php if (!empty($recipe['description'])): ?>
+    <p><?= nl2br(htmlspecialchars($recipe['description'])) ?></p>
+  <?php endif; ?>
 
-  <h2>Steps</h2>
-  <ol>
-    <?php foreach ($recipe['steps'] as $step): ?>
-      <li><?= htmlspecialchars($step) ?></li>
-    <?php endforeach; ?>
-  </ol>
+  <div class="section">
+    <h2>Ingredients</h2>
+    <ul>
+      <?php foreach ($ingredients as $item): ?>
+        <li><?= htmlspecialchars($item) ?></li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Steps</h2>
+    <ol>
+      <?php foreach ($steps as $step): ?>
+        <?php
+          $cleanStep = preg_replace('/^\d+\.\s*/', '', $step);
+        ?>
+        <li><?= htmlspecialchars($cleanStep) ?></li>
+      <?php endforeach; ?>
+    </ol>
+  </div>
+
+
+
 </body>
 </html>

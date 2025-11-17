@@ -18,49 +18,57 @@
 </head>
 <body>
 <?php
-$recipes = [
-  [
-    "id" => 1,
-    "title" => "Ancho-Orange Chicken with Kale Rice & Roasted Carrots",
-    "category" => "Poultry",
-    "description" => "Smoky ancho glaze + orange. Roasted carrots & creamy kale rice.",
-    "ingredients" => [
-      "4 Boneless, Skinless Chicken Breasts",
-      "1 Tbsp Ancho Chile Paste",
-      "2 Tbsps Crème Fraîche",
-      "3 Tbsps Golden Raisins",
-      "¾ Cup Jasmine Rice",
-      "Kale, Carrots, Garlic, Orange, Limes"
-    ],
-    "cook_time_min" => 38,
-    "difficulty" => "Advanced"
-  ],
-  [
-    "id" => 2,
-    "title" => "Beef Medallions & Mushroom Sauce with Mashed Potatoes",
-    "category" => "Beef",
-    "description" => "Pan-seared beef with a rich mushroom pan sauce and fluffy mash.",
-    "ingredients" => [
-      "Beef Medallions",
-      "Cremini Mushrooms",
-      "Yukon Gold Potatoes",
-      "Butter, Garlic, Stock, Cream"
-    ],
-    "cook_time_min" => 35,
-    "difficulty" => "Moderate"
-  ],
-];
+require 'connection.php';
 
+// 1) Read filters from the URL
 $q   = isset($_GET['q'])   ? trim($_GET['q'])   : '';
 $cat = isset($_GET['cat']) ? trim($_GET['cat']) : 'all';
 
-function matches_filter($recipe, $q, $cat) {
-  if ($cat !== 'all' && strcasecmp($recipe['category'], $cat) !== 0) return false;
-  if ($q === '') return true;
-  $hay = strtolower($recipe['title'] . ' ' . $recipe['description'] . ' ' . implode(' ', $recipe['ingredients']));
-  return strpos($hay, strtolower($q)) !== false;
+// 2) Get list of categories from the database for the dropdown
+$cats = ['all'];
+$catResult = mysqli_query($conn, "SELECT DISTINCT category FROM recipes WHERE category <> '' ORDER BY category");
+if ($catResult) {
+  while ($row = mysqli_fetch_assoc($catResult)) {
+    $cats[] = $row['category'];
+  }
 }
-$results = array_values(array_filter($recipes, fn($r) => matches_filter($r, $q, $cat)));
+
+// 3) Build the SQL query with optional filters
+$where = [];
+
+if ($q !== '') {
+  $safe = mysqli_real_escape_string($conn, $q);
+  $like = "'%" . $safe . "%'";
+  $where[] = "(title LIKE $like OR description LIKE $like OR ingredients LIKE $like)";
+}
+
+if ($cat !== '' && strtolower($cat) !== 'all') {
+  $safeCat = mysqli_real_escape_string($conn, $cat);
+  $where[] = "category = '$safeCat'";
+}
+
+$sql = "
+  SELECT id, title, category, description, ingredients, cook_time, difficulty
+  FROM recipes
+";
+
+if ($where) {
+  $sql .= " WHERE " . implode(" AND ", $where);
+}
+
+$sql .= " ORDER BY title";
+
+// 4) Run the query and collect results
+$results = [];
+$result = mysqli_query($conn, $sql);
+
+if ($result) {
+  while ($row = mysqli_fetch_assoc($result)) {
+    $results[] = $row;
+  }
+} else {
+  die('Query error: ' . mysqli_error($conn));
+}
 ?>
 
 <header>
@@ -72,10 +80,11 @@ $results = array_values(array_filter($recipes, fn($r) => matches_filter($r, $q, 
   <input type="text" name="q" placeholder="Keyword (e.g., chicken, rice…)" value="<?= htmlspecialchars($q) ?>">
   <select name="cat">
     <?php
-      $cats = ['all','Poultry','Beef','Seafood','Vegetarian'];
       foreach ($cats as $c) {
-        $sel = (strcasecmp($c, $cat)===0) ? 'selected' : '';
-        echo "<option value=\"".htmlspecialchars($c)."\" $sel>".htmlspecialchars(ucfirst($c))."</option>";
+        $value = $c;
+        $label = ($c === 'all') ? 'All' : $c;
+        $sel = (strcasecmp($c, $cat) === 0) ? 'selected' : '';
+        echo '<option value="'.htmlspecialchars($value).'" '.$sel.'>'.htmlspecialchars($label).'</option>';
       }
     ?>
   </select>
@@ -84,8 +93,10 @@ $results = array_values(array_filter($recipes, fn($r) => matches_filter($r, $q, 
 </form>
 
 <?php if ($q !== '' || strcasecmp($cat,'all')!==0): ?>
-  <p>Showing <?= $q!=='' ? '“<strong>'.htmlspecialchars($q).'</strong>” ' : 'all ' ?>
-     <?= (strcasecmp($cat,'all')!==0) ? 'in <strong>'.htmlspecialchars($cat).'</strong>' : 'categories' ?>
+  <p>
+    Showing
+    <?= $q!=='' ? '“<strong>'.htmlspecialchars($q).'</strong>” ' : 'all ' ?>
+    <?= (strcasecmp($cat,'all')!==0) ? 'in <strong>'.htmlspecialchars($cat).'</strong>' : 'categories' ?>
   </p>
 <?php endif; ?>
 
@@ -119,14 +130,22 @@ $results = array_values(array_filter($recipes, fn($r) => matches_filter($r, $q, 
       <article class="card">
         <h3 style="margin:0 0 6px;"><?= htmlspecialchars($r['title']) ?></h3>
         <p class="meta">
-          <?= htmlspecialchars($r['category']) ?> ·
-          <?= (int)$r['cook_time_min'] ?> min ·
-          <?= htmlspecialchars($r['difficulty']) ?>
+          <?= htmlspecialchars($r['category']) ?>
+          <?php if (!empty($r['cook_time'])): ?>
+            · <?= htmlspecialchars($r['cook_time']) ?>
+          <?php endif; ?>
+          <?php if (!empty($r['difficulty'])): ?>
+            · <?= htmlspecialchars($r['difficulty']) ?>
+          <?php endif; ?>
         </p>
-        <p><?= htmlspecialchars($r['description']) ?></p>
-        <p style="margin-top:8px;"><strong>Ingredients:</strong><br>
-          <?= htmlspecialchars(implode(", ", $r['ingredients'])) ?>
-        </p>
+        <?php if (!empty($r['description'])): ?>
+          <p><?= htmlspecialchars($r['description']) ?></p>
+        <?php endif; ?>
+        <?php if (!empty($r['ingredients'])): ?>
+          <p style="margin-top:8px;"><strong>Ingredients:</strong><br>
+            <?= nl2br(htmlspecialchars($r['ingredients'])) ?>
+          </p>
+        <?php endif; ?>
         <p style="margin-top:10px;">
           <a href="recipe.php?id=<?= (int)$r['id'] ?>">View recipe</a>
         </p>
