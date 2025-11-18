@@ -8,7 +8,7 @@
   --ink:       #273043;
   --muted:     #657289;
   --border:    #e8ecf5;
-  --accent:    #6c8cff;
+  --accent:    #de591c;
   --accent-2:  #ffd6e7;
   --accent-3:  #d7f8e4;
   --chip:      #f4f6ff;
@@ -28,7 +28,7 @@
 
 body {
   margin: 0;
-  padding: 20px;
+  padding: 0;
   font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--ink);
@@ -57,49 +57,6 @@ h1, h2, h3, h4 {
    Main site header / nav
 ================================ */
 
-header.site {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1000px;
-  margin: 0 auto 16px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 800;
-  font-size: 22px;
-}
-
-.brand-badge {
-  width: 32px;
-  height: 32px;
-  border-radius: 12px;
-  background: var(--accent-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.links a {
-  text-decoration: none;
-  color: var(--muted);
-  margin-left: 12px;
-  font-size: 14px;
-  padding: 6px 10px;
-  border-radius: 999px;
-}
-
-.links a:hover {
-  background: var(--chip);
-  color: var(--ink);
-}
-
-/* Simple page header (search page, etc.) */
-
 header.page-header {
   max-width: 1000px;
   margin: 0 auto 16px;
@@ -108,28 +65,104 @@ header.page-header {
   gap: 12px;
 }
 
-/* ================================
-   Hero section (index)
-================================ */
+.top-strip {
+  background: var(--accent);
+  color: #fff;
+  padding: 50px 0 50px;
+  margin: 0;         
+  width: 100%;         
+}
+
+header.site {
+  max-width: 1000px;
+  margin: 0 auto 8px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 20px;
+  color: #fff;
+}
+
+.brand-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.links a {
+  text-decoration: none;
+  color: rgba(255,255,255,0.85);
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.links a:hover {
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+}
+
+.links a.active {
+  background: #fff;
+  color: var(--accent);
+}
+
+/* Hero text + search inside the strip */
 
 .hero {
   max-width: 1000px;
-  margin: 0 auto 18px;
-  padding: 16px 18px;
-  background: linear-gradient(120deg, #f3f4ff, #ffeaf4);
-  border-radius: 18px;
-  border: 1px solid #e0e4fa;
+  margin: 0 auto;
+  padding: 4px 18px 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
 }
 
 .hero h2 {
   margin: 0 0 8px;
   font-size: 22px;
+  color: #fff;
 }
 
 .hero p {
   margin: 0;
-  color: var(--muted);
+  color: rgba(255,255,255,0.9);
   font-size: 14px;
+}
+
+/* Make search inputs look good on the dark background */
+
+.top-strip .search input[type="text"] {
+  background: #fff;
+  color: var(--ink);
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+.top-strip .search button {
+  background: #fff;
+  color: var(--accent);
 }
 
 .row {
@@ -412,4 +445,114 @@ footer {
   max-width: 1000px;
   margin: 0 auto 8px;
   font-size: 14px;
+}
+
+
+/* ================================
+    Recipe photo gallery
+================================ */
+
+
+.recipe-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.recipe-photo {
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f3f8;
+}
+
+.recipe-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Hero image at top of recipe page */
+.recipe-hero {
+  max-width: 900px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f3f3f8;
+}
+
+.recipe-hero img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Card thumbnail (home page) */
+.card-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f3f8;
+  margin-bottom: 8px;
+}
+
+.card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Side-by-side layouts for ingredients and steps */
+.ingredients-layout,
+.steps-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.ingredients-text,
+.steps-text {
+  flex: 2;
+}
+
+.ingredients-photos,
+.steps-photos {
+  flex: 1.2;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.recipe-photo {
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f3f8;
+}
+
+.recipe-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+
+/* Stack on small screens */
+@media (max-width: 768px) {
+  .ingredients-layout,
+  .steps-layout {
+    flex-direction: column;
+  }
+
+  .ingredients-photos,
+  .steps-photos {
+    width: 100%;
+  }
 }

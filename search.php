@@ -2,19 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>My Cookbook — Filter</title>
+  <title>Cookbook — Find Recipes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 20px; }
-    header { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
-    input, select, button { padding: 8px 10px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-    .card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; }
-    .meta { color:#555; font-size: 14px; margin: 6px 0; }
-    .empty { border: 1px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; }
-    a.btn { display:inline-block; padding:8px 12px; border-radius:6px; background:#0066cc; color:#fff; text-decoration:none; border:1px solid #0066cc; }
-    a.btn.secondary { background:#fff; color:#000; border:1px solid #ddd; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <?php
@@ -69,89 +60,135 @@ if ($result) {
 } else {
   die('Query error: ' . mysqli_error($conn));
 }
+
+$total = count($results);
 ?>
 
-<header>
-  <h1 style="margin:0;">Find Recipes</h1>
-  <a href="index.php" class="btn secondary">← Home</a>
+<!-- Same header/nav as index.php -->
+<header class="site">
+  <div class="brand">
+    <div class="brand-badge">🍽</div>
+    <div>Cookbook</div>
+  </div>
+  <nav class="links">
+    <a href="index.php">Home</a>
+    <a href="search.php">Find Recipes</a>
+    <a href="help.php">Help</a>
+    <a href="add.php">Add Recipe</a>
+  </nav>
 </header>
 
-<form method="get" action="search.php" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 12px;">
-  <input type="text" name="q" placeholder="Keyword (e.g., chicken, rice…)" value="<?= htmlspecialchars($q) ?>">
-  <select name="cat">
-    <?php
-      foreach ($cats as $c) {
-        $value = $c;
-        $label = ($c === 'all') ? 'All' : $c;
-        $sel = (strcasecmp($c, $cat) === 0) ? 'selected' : '';
-        echo '<option value="'.htmlspecialchars($value).'" '.$sel.'>'.htmlspecialchars($label).'</option>';
-      }
-    ?>
-  </select>
-  <button type="submit">Apply</button>
-  <a class="btn secondary" href="search.php">Reset</a>
-</form>
+<!-- Hero-style search header -->
+<section class="hero">
+  <div class="row" style="justify-content:space-between;">
+    <div>
+      <h2>Find a recipe</h2>
+      <p>Filter by keyword and category to narrow down your collection.</p>
+    </div>
+    <form class="search" method="get" action="search.php">
+      <input
+        type="text"
+        name="q"
+        placeholder="Search (e.g., chicken, pasta, broccoli…)"
+        value="<?= htmlspecialchars($q) ?>"
+      >
+      <select name="cat">
+        <?php
+          foreach ($cats as $c) {
+            $value = $c;
+            $label = ($c === 'all') ? 'All categories' : $c;
+            $sel = (strcasecmp($c, $cat) === 0) ? 'selected' : '';
+            echo '<option value="'.htmlspecialchars($value).'" '.$sel.'>'.htmlspecialchars($label).'</option>';
+          }
+        ?>
+      </select>
+      <button type="submit">Search</button>
+      <a class="btn" href="search.php">Reset</a>
+    </form>
+  </div>
+</section>
 
-<?php if ($q !== '' || strcasecmp($cat,'all')!==0): ?>
-  <p>
-    Showing
-    <?= $q!=='' ? '“<strong>'.htmlspecialchars($q).'</strong>” ' : 'all ' ?>
-    <?= (strcasecmp($cat,'all')!==0) ? 'in <strong>'.htmlspecialchars($cat).'</strong>' : 'categories' ?>
-  </p>
-<?php endif; ?>
+<main>
+  <section class="section">
+    <div class="section-header">
+      <h3>Search results</h3>
+      <div class="pill-row">
+        <span class="pill"><strong><?= $total ?></strong> recipes</span>
+        <?php if ($q !== ''): ?>
+          <span class="pill">Keyword: “<?= htmlspecialchars($q) ?>”</span>
+        <?php endif; ?>
+        <?php if (strcasecmp($cat, 'all') !== 0): ?>
+          <span class="pill">Category: <?= htmlspecialchars($cat) ?></span>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
 
-<?php if (!$results): ?>
-  <div class="empty">
-    <h2 style="margin:0 0 8px;">No recipes found</h2>
+  <?php if ($total === 0): ?>
+    <div class="empty">
+      <h2 style="margin:0 0 8px;">No recipes found</h2>
 
-    <?php if ($q !== '' || strcasecmp($cat,'all')!==0): ?>
-      <p>
-        Your search
-        <?= $q !== '' ? 'for “<strong>'.htmlspecialchars($q).'</strong>” ' : '' ?>
-        <?= (strcasecmp($cat,'all')!==0) ? 'in <strong>'.htmlspecialchars($cat).'</strong> ' : '' ?>
-        returned no results.
+      <?php if ($q !== '' || strcasecmp($cat,'all')!==0): ?>
+        <p>
+          Your search
+          <?= $q !== '' ? 'for “<strong>'.htmlspecialchars($q).'</strong>” ' : '' ?>
+          <?= (strcasecmp($cat,'all')!==0) ? 'in <strong>'.htmlspecialchars($cat).'</strong> ' : '' ?>
+          returned no results.
+        </p>
+      <?php else: ?>
+        <p>You don’t have any recipes that match this filter yet.</p>
+      <?php endif; ?>
+
+      <ol style="text-align:left; max-width:600px; margin: 12px auto 0;">
+        <li>Try a broader word (e.g., “chicken” instead of “ancho”).</li>
+        <li>Clear category filters and search again.</li>
+        <li>Search by an ingredient that’s definitely in the recipe.</li>
+      </ol>
+
+      <p style="margin-top:18px;">
+        <a class="btn" href="search.php">Reset filters</a>
+        <a class="btn" href="index.php" style="background:var(--accent-2); border-color:var(--accent-2); color:#333;">Back to Home</a>
       </p>
-    <?php endif; ?>
+    </div>
+  <?php else: ?>
+    <div class="grid">
+      <?php foreach ($results as $r): ?>
+        <article class="card">
+          <h4 class="title"><?= htmlspecialchars($r['title']) ?></h4>
 
-    <ol style="text-align:left; max-width:600px; margin: 12px auto 0;">
-      <li>Try a broader word (e.g., “chicken” instead of “ancho”).</li>
-      <li>Clear category filters and search again.</li>
-      <li>Search by an ingredient that’s definitely in the recipe.</li>
-    </ol>
-
-    <p style="margin-top:18px;">
-      <a class="btn" href="search.php?<?= http_build_query(['q'=>$q,'cat'=>$cat]) ?>">Back to Search</a>
-      <a class="btn secondary" href="index.php">Go to Home</a>
-    </p>
-  </div>
-<?php else: ?>
-  <div class="grid">
-    <?php foreach ($results as $r): ?>
-      <article class="card">
-        <h3 style="margin:0 0 6px;"><?= htmlspecialchars($r['title']) ?></h3>
-        <p class="meta">
-          <?= htmlspecialchars($r['category']) ?>
-          <?php if (!empty($r['cook_time'])): ?>
-            · <?= htmlspecialchars($r['cook_time']) ?>
-          <?php endif; ?>
-          <?php if (!empty($r['difficulty'])): ?>
-            · <?= htmlspecialchars($r['difficulty']) ?>
-          <?php endif; ?>
-        </p>
-        <?php if (!empty($r['description'])): ?>
-          <p><?= htmlspecialchars($r['description']) ?></p>
-        <?php endif; ?>
-        <?php if (!empty($r['ingredients'])): ?>
-          <p style="margin-top:8px;"><strong>Ingredients:</strong><br>
-            <?= nl2br(htmlspecialchars($r['ingredients'])) ?>
+          <p class="meta">
+            <?= htmlspecialchars($r['category']) ?>
+            <?php if (!empty($r['cook_time'])): ?>
+              · <?= htmlspecialchars($r['cook_time']) ?>
+            <?php endif; ?>
+            <?php if (!empty($r['difficulty'])): ?>
+              · <?= htmlspecialchars($r['difficulty']) ?>
+            <?php endif; ?>
           </p>
-        <?php endif; ?>
-        <p style="margin-top:10px;">
-          <a href="recipe.php?id=<?= (int)$r['id'] ?>">View recipe</a>
-        </p>
-      </article>
-    <?php endforeach; ?>
-  </div>
-<?php endif; ?>
+
+          <?php if (!empty($r['description'])): ?>
+            <p><?= htmlspecialchars($r['description']) ?></p>
+          <?php endif; ?>
+
+          <?php if (!empty($r['ingredients'])): ?>
+            <p style="margin-top:6px; font-size:13px;">
+              <strong>Ingredients preview:</strong><br>
+              <?= nl2br(htmlspecialchars($r['ingredients'])) ?>
+            </p>
+          <?php endif; ?>
+
+          <div style="margin-top:8px;">
+            <a class="btn primary" href="recipe.php?id=<?= (int)$r['id'] ?>">View</a>
+          </div>
+        </article>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+</main>
+
+<footer>
+  Cookbook · IDM 232
+</footer>
+
 </body>
 </html>

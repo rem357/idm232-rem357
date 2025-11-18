@@ -27,6 +27,52 @@ $recipe = mysqli_fetch_assoc($result);
 // Convert long text fields into arrays for ingredients + steps
 $ingredients = array_filter(array_map('trim', explode("\n", $recipe['ingredients'])));
 $steps = array_filter(array_map('trim', explode("\n", $recipe['steps'])));
+
+
+
+// Load images from images/recipes/{id}/final, /ingredients, /steps
+$finalImage        = null;
+$ingredientsImages = [];
+$stepsImages       = [];
+
+$baseDir  = __DIR__ . '/images/recipes/' . $id;
+$baseUrl  = 'images/recipes/' . $id . '/';
+$extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+// Final (one main hero image)
+$finalDir = $baseDir . '/final';
+if (is_dir($finalDir)) {
+  foreach ($extensions as $ext) {
+    $matches = glob($finalDir . '/*.' . $ext);
+    if ($matches && count($matches) > 0) {
+      // Just use the first file as the hero image
+      $finalImage = $baseUrl . 'final/' . basename($matches[0]);
+      break;
+    }
+  }
+}
+
+// Ingredient photos
+$ingredientsDir = $baseDir . '/ingredients';
+if (is_dir($ingredientsDir)) {
+  foreach ($extensions as $ext) {
+    foreach (glob($ingredientsDir . '/*.' . $ext) as $path) {
+      $ingredientsImages[] = $baseUrl . 'ingredients/' . basename($path);
+    }
+  }
+}
+
+// Step photos
+$stepsDir = $baseDir . '/steps';
+if (is_dir($stepsDir)) {
+  foreach ($extensions as $ext) {
+    foreach (glob($stepsDir . '/*.' . $ext) as $path) {
+      $stepsImages[] = $baseUrl . 'steps/' . basename($path);
+    }
+  }
+}
+
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -40,6 +86,12 @@ $steps = array_filter(array_map('trim', explode("\n", $recipe['steps'])));
 <body>
 
   <p><a href="index.php">← Back to recipes</a></p>
+
+<?php if ($finalImage): ?>
+  <div class="recipe-hero">
+    <img src="<?= htmlspecialchars($finalImage) ?>" alt="<?= htmlspecialchars($recipe['title']) ?>">
+  </div>
+<?php endif; ?>
 
   <h1><?= htmlspecialchars($recipe['title']) ?></h1>
 
@@ -60,7 +112,9 @@ $steps = array_filter(array_map('trim', explode("\n", $recipe['steps'])));
     <p><?= nl2br(htmlspecialchars($recipe['description'])) ?></p>
   <?php endif; ?>
 
-  <div class="section">
+
+<div class="section-block ingredients-layout">
+  <div class="ingredients-text">
     <h2>Ingredients</h2>
     <ul>
       <?php foreach ($ingredients as $item): ?>
@@ -69,17 +123,44 @@ $steps = array_filter(array_map('trim', explode("\n", $recipe['steps'])));
     </ul>
   </div>
 
-  <div class="section">
+  <?php if (!empty($ingredientsImages)): ?>
+    <div class="ingredients-photos">
+      <?php foreach ($ingredientsImages as $src): ?>
+        <figure class="recipe-photo">
+          <img src="<?= htmlspecialchars($src) ?>" alt="<?= htmlspecialchars($recipe['title']) ?> – ingredient photo">
+        </figure>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+</div>
+
+
+
+<div class="section-block steps-layout">
+  <div class="steps-text">
     <h2>Steps</h2>
     <ol>
       <?php foreach ($steps as $step): ?>
         <?php
+          // keep your number-stripping fix
           $cleanStep = preg_replace('/^\d+\.\s*/', '', $step);
         ?>
         <li><?= htmlspecialchars($cleanStep) ?></li>
       <?php endforeach; ?>
     </ol>
   </div>
+
+  <?php if (!empty($stepsImages)): ?>
+    <div class="steps-photos">
+      <?php foreach ($stepsImages as $src): ?>
+        <figure class="recipe-photo">
+          <img src="<?= htmlspecialchars($src) ?>" alt="<?= htmlspecialchars($recipe['title']) ?> – step photo">
+        </figure>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+</div>
+
 
 
 
