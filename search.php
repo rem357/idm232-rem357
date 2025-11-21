@@ -17,7 +17,7 @@ $cat = isset($_GET['cat']) ? trim($_GET['cat']) : 'all';
 
 // 2) Get list of categories from the database for the dropdown
 $cats = ['all'];
-$catResult = mysqli_query($conn, "SELECT DISTINCT category FROM recipes WHERE category <> '' ORDER BY category");
+$catResult = mysqli_query($connection, "SELECT DISTINCT category FROM recipes WHERE category <> '' ORDER BY category");
 if ($catResult) {
   while ($row = mysqli_fetch_assoc($catResult)) {
     $cats[] = $row['category'];
@@ -28,13 +28,13 @@ if ($catResult) {
 $where = [];
 
 if ($q !== '') {
-  $safe = mysqli_real_escape_string($conn, $q);
+  $safe = mysqli_real_escape_string($connection, $q);
   $like = "'%" . $safe . "%'";
   $where[] = "(title LIKE $like OR description LIKE $like OR ingredients LIKE $like)";
 }
 
 if ($cat !== '' && strtolower($cat) !== 'all') {
-  $safeCat = mysqli_real_escape_string($conn, $cat);
+  $safeCat = mysqli_real_escape_string($connection, $cat);
   $where[] = "category = '$safeCat'";
 }
 
@@ -51,14 +51,14 @@ $sql .= " ORDER BY title";
 
 // 4) Run the query and collect results
 $results = [];
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($connection, $sql);
 
 if ($result) {
   while ($row = mysqli_fetch_assoc($result)) {
     $results[] = $row;
   }
 } else {
-  die('Query error: ' . mysqli_error($conn));
+  die('Query error: ' . mysqli_error($connection));
 }
 
 $total = count($results);

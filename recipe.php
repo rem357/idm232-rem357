@@ -13,7 +13,7 @@ if ($id <= 0) {
 
 // 3. Query the database for THIS recipe
 $sql = "SELECT * FROM recipes WHERE id = $id LIMIT 1";
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($connection, $sql);
 
 if (!$result || mysqli_num_rows($result) === 0) {
   http_response_code(404);
@@ -107,7 +107,7 @@ if (is_dir($stepsDir)) {
       <span><?= htmlspecialchars($recipe['servings']) ?> servings</span>
     <?php endif; ?>
   </div>
-
+ 
   <?php if (!empty($recipe['description'])): ?>
     <p><?= nl2br(htmlspecialchars($recipe['description'])) ?></p>
   <?php endif; ?>

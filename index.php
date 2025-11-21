@@ -10,24 +10,22 @@
 
 <body>
 <?php
-// 1) Connect to the database
+
 require 'connection.php';
 
-// 2) Filters from the URL
 $q   = isset($_GET['q'])   ? trim($_GET['q'])   : '';
 $cat = isset($_GET['cat']) ? trim($_GET['cat']) : 'all';
 
-// 3) Build the query for recipes
 $where = [];
 
 if ($q !== '') {
-  $safe = mysqli_real_escape_string($conn, $q);
+  $safe = mysqli_real_escape_string($connection, $q);
   $like = "'%" . $safe . "%'";
   $where[] = "(title LIKE $like OR description LIKE $like OR ingredients LIKE $like)";
 }
 
 if ($cat !== '' && strtolower($cat) !== 'all') {
-  $safeCat = mysqli_real_escape_string($conn, $cat);
+  $safeCat = mysqli_real_escape_string($connection, $cat);
   $where[] = "category = '$safeCat'";
 }
 
@@ -39,21 +37,19 @@ if ($where) {
 
 $sql .= " ORDER BY title";
 
-// 4) Run query and put rows into $results
 $results = [];
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($connection, $sql);
 
 if ($result) {
   while ($row = mysqli_fetch_assoc($result)) {
     $results[] = $row;
   }
 } else {
-  die('Query error: ' . mysqli_error($conn));
+  die('Query error: ' . mysqli_error($connection));
 }
 
-// 5) Get the list of categories for the chips
 $categories = [];
-$catResult = mysqli_query($conn, "SELECT DISTINCT category FROM recipes WHERE category <> '' ORDER BY category");
+$catResult = mysqli_query($connection, "SELECT DISTINCT category FROM recipes WHERE category <> '' ORDER BY category");
 
 if ($catResult) {
   while ($row = mysqli_fetch_assoc($catResult)) {
@@ -63,10 +59,8 @@ if ($catResult) {
   }
 }
 
-// 6) Count of recipes found
 $total = count($results);
 
-// helper to get final image for a recipe card
 function get_final_image_for_recipe($id) {
   $baseDir = __DIR__ . '/images/recipes/' . $id . '/final';
   $baseUrl = 'images/recipes/' . $id . '/final/';
@@ -90,7 +84,6 @@ function get_final_image_for_recipe($id) {
 <div class="top-strip">
   <header class="site">
     <div class="brand">
-      <div class="brand-badge">🍽</div>
       <div>Cookbook</div>
     </div>
     <nav class="links">
@@ -105,7 +98,7 @@ function get_final_image_for_recipe($id) {
     <div class="row" style="justify-content:space-between;">
       <div>
         <h2>Hello there</h2>
-        <p>Welcome to your recipe collection. Search, browse, and filter by category.</p>
+        <p>[welcome message]</p>
       </div>
       <form class="search" method="get" action="index.php">
         <input
