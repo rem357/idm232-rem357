@@ -152,7 +152,7 @@ function get_final_image_for_recipe($id) {
       <div class="section-header">
         <h3>
           <?php if ($q === '' && (strtolower($cat) === 'all')): ?>
-            Browse all recipes
+            Filter by Category
           <?php else: ?>
             Search results
           <?php endif; ?>
