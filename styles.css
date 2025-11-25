@@ -1,5 +1,5 @@
 /* ================================
-   Global theme
+   global theme tokens
 ================================ */
 
 :root {
@@ -20,7 +20,9 @@
   --shadow-soft: 0 12px 18px rgba(0,0,0,.06);
 }
 
-/* Base */
+/* ================================
+   base + typography
+================================ */
 
 * {
   box-sizing: border-box;
@@ -32,6 +34,7 @@ body {
   font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--ink);
+  font-size: 18px; /* global type bump */
 }
 
 a {
@@ -43,18 +46,21 @@ a:hover {
   text-decoration: underline;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   margin: 0 0 8px;
 }
 
-
+/* main page wrapper (used on some pages) */
 .page-wrap {
   max-width: 1000px;
   margin: 0 auto 40px;
 }
 
 /* ================================
-   Main site header / nav
+   header / nav
 ================================ */
 
 header.page-header {
@@ -68,9 +74,9 @@ header.page-header {
 .top-strip {
   background: var(--accent);
   color: #fff;
-  padding: 50px 0 50px;
-  margin: 0;         
-  width: 100%;         
+  padding: 40px 0 36px;
+  margin: 0;
+  width: 100%;
 }
 
 header.site {
@@ -87,10 +93,11 @@ header.site {
   align-items: center;
   gap: 10px;
   font-weight: 800;
-  font-size: 20px;
+  font-size: 24px; /* bumped */
   color: #fff;
 }
 
+/* used on recipe page header */
 .brand-badge {
   width: 32px;
   height: 32px;
@@ -112,8 +119,8 @@ header.site {
 .links a {
   text-decoration: none;
   color: rgba(255,255,255,0.85);
-  font-size: 14px;
-  padding: 6px 12px;
+  font-size: 16px; /* bumped */
+  padding: 6px 16px; /* slightly wider */
   border-radius: 999px;
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -128,30 +135,54 @@ header.site {
   color: var(--accent);
 }
 
-/* Hero text + search inside the strip */
+/* generic flex row helper (used on help page hero) */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+/* ================================
+   hero (top strip content)
+================================ */
 
 .hero {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 4px 18px 0;
+  padding: 10px 18px 4px;
   background: transparent;
   border-radius: 0;
   border: none;
 }
 
+.hero-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.hero-copy {
+  max-width: 360px;
+}
+
 .hero h2 {
   margin: 0 0 8px;
-  font-size: 22px;
+  font-size: 28px; /* bumped */
   color: #fff;
 }
 
 .hero p {
   margin: 0;
   color: rgba(255,255,255,0.9);
-  font-size: 14px;
+  font-size: 17px; /* bumped */
 }
 
-/* Make search inputs look good on the dark background */
+/* ================================
+   search bars / forms
+================================ */
 
 .top-strip .search input[type="text"] {
   background: #fff;
@@ -164,18 +195,6 @@ header.site {
   background: #fff;
   color: var(--accent);
 }
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* ================================
-   Search bars / forms
-================================ */
 
 .search {
   display: flex;
@@ -209,8 +228,6 @@ header.site {
   opacity: .9;
 }
 
-/* Generic form styles (search.php) */
-
 form.filter-form {
   max-width: 1000px;
   margin: 0 auto 12px;
@@ -229,12 +246,12 @@ form.filter-form button {
 }
 
 /* ================================
-   Sections, pills, chips
+   main sections / pills / chips
 ================================ */
 
 main {
   max-width: 1000px;
-  margin: 0 auto 40px;
+  margin: 40px auto 40px; /* top margin bumped */
 }
 
 .section {
@@ -251,7 +268,7 @@ main {
 
 .section-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px; /* bumped */
 }
 
 .pill-row {
@@ -264,7 +281,7 @@ main {
 .pill {
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px; /* bumped */
   border: 1px solid var(--border);
   background: #fff;
   color: var(--muted);
@@ -284,20 +301,21 @@ main {
 .chip {
   padding: 4px 8px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 13px; /* bumped */
   background: var(--chip);
   color: var(--muted);
 }
 
 /* ================================
-   Cards / grids (index + search)
+   cards / grids (index + search)
 ================================ */
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-  margin-top: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+  align-items: stretch;
 }
 
 .card {
@@ -309,6 +327,8 @@ main {
   flex-direction: column;
   gap: 8px;
   transition: transform .08s ease, box-shadow .08s ease;
+  height: 401.46px;   /* keeps card heights consistent */
+  width: 322.67px;    /* matches your design */
 }
 
 .card:hover {
@@ -316,20 +336,43 @@ main {
   box-shadow: var(--shadow-soft);
 }
 
+.card-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f3f8;
+  margin-bottom: 8px;
+}
+
+.card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .title {
   font-weight: 700;
   margin: 0;
-  font-size: 16px;
+  font-size: 18px; /* bumped */
 }
 
 .meta {
   color: #555;
-  font-size: 14px;
+  font-size: 16px; /* bumped */
   margin: 6px 0;
 }
 
+/* footer area in cards so button stays aligned at bottom */
+.card-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+
 /* ================================
-   Buttons / links
+   buttons / link-like buttons
 ================================ */
 
 .btn {
@@ -339,7 +382,7 @@ main {
   border: 1px solid var(--border);
   background: #fff;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 15px; /* bumped */
   color: var(--ink);
   cursor: pointer;
 }
@@ -361,7 +404,7 @@ main {
 }
 
 /* ================================
-   Empty state
+   empty state
 ================================ */
 
 .empty {
@@ -374,84 +417,46 @@ main {
   background: #fff;
 }
 
+/* shared empty-state helper text (search page uses this) */
+.empty-tips {
+  text-align: left;
+  max-width: 600px;
+  margin: 12px auto 0;
+  font-size: 15px;
+}
+
+.empty-actions {
+  margin-top: 18px;
+}
+
+.empty-actions .btn + .btn {
+  margin-left: 8px;
+}
+
 /* ================================
-   Footer
+   footer
 ================================ */
 
 footer {
   margin: 24px 0 8px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px; /* bumped */
   text-align: center;
 }
 
 /* ================================
-   Recipe page details
-================================ */
-
-.recipe-wrapper {
-  max-width: 900px;
-  margin: 0 auto 40px;
-}
-
-.recipe-header {
-  margin-bottom: 10px;
-}
-
-.badges {
-  margin: 6px 0 12px;
-}
-
-.badges span {
-  display: inline-block;
-  padding: 6px 10px;
-  border: 1px solid #e0e4fa;
-  border-radius: 999px;
-  background: #fff;
-  margin-right: 8px;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.recipe-description {
-  margin: 8px 0 16px;
-  color: var(--muted);
-}
-
-.section-block {
-  margin-top: 24px;
-}
-
-.section-block h2 {
-  margin-bottom: 6px;
-}
-
-.section-block ul,
-.section-block ol {
-  line-height: 1.6;
-  padding-left: 20px;
-}
-
-.back-link {
-  max-width: 900px;
-  margin: 0 auto 8px;
-}
-
-/* ================================
-   Small tweaks for search page layout
+   generic search meta text
 ================================ */
 
 .search-meta {
   max-width: 1000px;
   margin: 0 auto 8px;
-  font-size: 14px;
+  font-size: 16px; /* bumped */
 }
 
-
 /* ================================
-    Recipe photo gallery
+   recipe photo gallery + thumbs
 ================================ */
-
 
 .recipe-gallery {
   display: grid;
@@ -474,13 +479,47 @@ footer {
   display: block;
 }
 
-/* Hero image at top of recipe page */
-.recipe-hero {
+/* ================================
+   back button (recipe page)
+================================ */
+
+.back-row {
   max-width: 900px;
-  margin: 0 auto 16px;
-  border-radius: 16px;
+  margin: auto;
+  margin-top: 10px;
+  padding: auto;
+}
+
+.back-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.back-pill:hover {
+  box-shadow: var(--shadow-soft);
+  background: #f9fafc;
+  text-decoration: none;
+}
+
+/* ================================
+   recipe hero + header + meta
+================================ */
+
+.recipe-hero {
+  max-width: 300px;
+  margin: 0 auto;
+  border-radius: 18px;
   overflow: hidden;
-  background: #f3f3f8;
+  box-shadow: var(--shadow-soft);
 }
 
 .recipe-hero img {
@@ -490,69 +529,230 @@ footer {
   object-fit: cover;
 }
 
-/* Card thumbnail (home page) */
-.card-thumb {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #f3f3f8;
-  margin-bottom: 8px;
+h1 {
+  max-width: 900px;
+  margin: 0 auto 0;
+  padding: 0 18px;
+  font-size: 32px; /* bumped */
+  font-weight: 800;
 }
 
-.card-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.badges {
+  max-width: 900px;
+  margin: 8px auto 12px;
+  padding: 0 18px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.badges span {
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1px solid #e0e4fa;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 15px;
+  color: var(--muted);
+  margin-right: 0; /* remove this if you use flex/gap */
+}
+
+
+.recipe-description {
+  max-width: 900px;
+  margin: 0 auto 24px;
+  padding: 0 18px;
+  color: var(--muted);
+  font-size: 17px; /* bumped */
+  line-height: 1.6;
+}
+
+/* ================================
+   recipe content sections
+================================ */
+
+.section-block {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.section-block h2 {
+  margin-bottom: 6px;
+}
+
+.section-block ul,
+.section-block ol {
+  line-height: 1.7;
+  padding-left: 20px;
+}
+
+/* ingredients: text + photo grid */
+
+.section-block.ingredients-layout {
   display: block;
 }
 
-/* Side-by-side layouts for ingredients and steps */
-.ingredients-layout,
-.steps-layout {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
+.ingredients-text {
+  margin-bottom: 16px;
 }
 
-.ingredients-text,
-.steps-text {
-  flex: 2;
+.ingredients-text ul {
+  padding-left: 20px;
+  line-height: 1.7;
 }
 
-.ingredients-photos,
-.steps-photos {
-  flex: 1.2;
+.ingredients-photos {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
 }
 
-.recipe-photo {
+.ingredients-photos .recipe-photo,
+.steps-gallery .step-photo {
   margin: 0;
   border-radius: 10px;
   overflow: hidden;
   background: #f3f3f8;
+  aspect-ratio: 4 / 3;
 }
 
-.recipe-photo img {
+.ingredients-photos .recipe-photo img,
+.steps-gallery .step-photo img {
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
   display: block;
 }
 
+/* steps: text + photo grid */
 
+.section-block.steps-block {
+  display: block;
+}
 
-/* Stack on small screens */
+.steps-list {
+  padding-left: 20px;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.step-item {
+  margin-bottom: 8px;
+}
+
+.step-label {
+  display: block;
+  font-size: 14px; /* bumped */
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.steps-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+/* ================================
+   search page layout
+================================ */
+
+.hero-search {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 18px 32px;
+  background: transparent;
+  text-align: center;
+}
+
+.hero-search .hero-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* reuse base hero h2 size; only tweak color/margin */
+.hero-search h2 {
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+/* match general body/paragraph size from the site */
+.hero-search p {
+  margin: 0;
+  color: rgba(255,255,255,0.9);
+  font-size: 15px;
+  max-width: 420px;
+}
+
+.hero-search .search {
+  justify-content: center;
+}
+
+.hero-search .search input[type="text"],
+.hero-search .search select {
+  max-width: 260px;
+}
+
+.hero-search .search .btn {
+  margin-left: 4px;
+}
+
+/* main content wrapper for search results */
+.search-main {
+  max-width: 1000px;
+  margin: 24px auto 40px;
+  padding: 0 18px;
+}
+
+.search-main .section {
+  margin-top: 0;
+}
+
+/* search page: empty-state heading size override */
+.empty h2 {
+  font-size: 24px;
+}
+
+/* grid wrapper for search results */
+.results-grid {
+  margin-top: 8px;
+}
+
+/* ================================
+   responsive
+================================ */
+
 @media (max-width: 768px) {
-  .ingredients-layout,
-  .steps-layout {
-    flex-direction: column;
+  .recipe-hero {
+    margin: 16px auto;
+  }
+
+  .hero-row {
+    align-items: flex-start;
   }
 
   .ingredients-photos,
-  .steps-photos {
-    width: 100%;
+  .steps-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-search {
+    padding: 20px 16px 28px;
+  }
+
+  .hero-search .search {
+    justify-content: center;
   }
 }

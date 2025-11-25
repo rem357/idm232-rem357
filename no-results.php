@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>No Results — My Cookbook</title>
+  <title>No Results — My Forkfolio</title>
   <style>
     body { font-family: system-ui, Arial, sans-serif; margin: 20px; }
     .empty { border: 1px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; }
@@ -32,5 +32,10 @@ $cat = isset($_GET['cat']) ? trim($_GET['cat']) : 'all';
   </ol>
 
 </div>
+
+  <footer>
+    Forkfolio · IDM 232-rem357
+  </footer>
+
 </body>
 </html>

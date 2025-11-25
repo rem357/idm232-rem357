@@ -1,30 +1,34 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Cookbook — Find Recipes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
 <?php
 require 'connection.php';
 
-// 1) Read filters from the URL
+// read filters from the url (search keyword + category)
 $q   = isset($_GET['q'])   ? trim($_GET['q'])   : '';
 $cat = isset($_GET['cat']) ? trim($_GET['cat']) : 'all';
 
-// 2) Get list of categories from the database for the dropdown
+// get list of categories from the database for the dropdown + chips
 $cats = ['all'];
-$catResult = mysqli_query($connection, "SELECT DISTINCT category FROM recipes WHERE category <> '' ORDER BY category");
+$catResult = mysqli_query(
+  $connection,
+  "SELECT DISTINCT category FROM recipes WHERE category <> '' ORDER BY category"
+);
+
 if ($catResult) {
   while ($row = mysqli_fetch_assoc($catResult)) {
-    $cats[] = $row['category'];
+    if (!empty($row['category'])) {
+      $cats[] = $row['category'];
+    }
   }
 }
 
-// 3) Build the SQL query with optional filters
+// build a separate categories array (no "all") for the chips
+$categories = [];
+foreach ($cats as $c) {
+  if ($c !== 'all') {
+    $categories[] = $c;
+  }
+}
+
+// build the sql query with optional search + category filters
 $where = [];
 
 if ($q !== '') {
@@ -38,10 +42,7 @@ if ($cat !== '' && strtolower($cat) !== 'all') {
   $where[] = "category = '$safeCat'";
 }
 
-$sql = "
-  SELECT id, title, category, description, ingredients, cook_time, difficulty
-  FROM recipes
-";
+$sql = "SELECT id, title, category FROM recipes";
 
 if ($where) {
   $sql .= " WHERE " . implode(" AND ", $where);
@@ -49,146 +50,227 @@ if ($where) {
 
 $sql .= " ORDER BY title";
 
-// 4) Run the query and collect results
+// run the query and collect results into a php array
 $results = [];
-$result = mysqli_query($connection, $sql);
+$result  = mysqli_query($connection, $sql);
 
 if ($result) {
   while ($row = mysqli_fetch_assoc($result)) {
     $results[] = $row;
   }
 } else {
-  die('Query error: ' . mysqli_error($connection));
+  die('query error: ' . mysqli_error($connection));
 }
 
+// count how many recipes matched
 $total = count($results);
+
+// helper to grab the final hero image (same as on index)
+function get_final_image_for_recipe($id) {
+  $baseDir    = __DIR__ . '/images/recipes/' . $id . '/final';
+  $baseUrl    = 'images/recipes/' . $id . '/final/';
+  $extensions = ['avif'];
+
+  if (!is_dir($baseDir)) {
+    return null;
+  }
+
+  foreach ($extensions as $ext) {
+    $matches = glob($baseDir . '/*.' . $ext);
+    if ($matches && count($matches) > 0) {
+      return $baseUrl . basename($matches[0]);
+    }
+  }
+
+  return null;
+}
 ?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Forkfolio — Find Recipes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-<!-- Same header/nav as index.php -->
-<header class="site">
-  <div class="brand">
-    <div class="brand-badge">🍽</div>
-    <div>Cookbook</div>
-  </div>
-  <nav class="links">
-    <a href="index.php">Home</a>
-    <a href="search.php">Find Recipes</a>
-    <a href="help.php">Help</a>
-    <a href="add.php">Add Recipe</a>
-  </nav>
-</header>
-
-<!-- Hero-style search header -->
-<section class="hero">
-  <div class="row" style="justify-content:space-between;">
-    <div>
-      <h2>Find a recipe</h2>
-      <p>Filter by keyword and category to narrow down your collection.</p>
-    </div>
-    <form class="search" method="get" action="search.php">
-      <input
-        type="text"
-        name="q"
-        placeholder="Search (e.g., chicken, pasta, broccoli…)"
-        value="<?= htmlspecialchars($q) ?>"
-      >
-      <select name="cat">
-        <?php
-          foreach ($cats as $c) {
-            $value = $c;
-            $label = ($c === 'all') ? 'All categories' : $c;
-            $sel = (strcasecmp($c, $cat) === 0) ? 'selected' : '';
-            echo '<option value="'.htmlspecialchars($value).'" '.$sel.'>'.htmlspecialchars($label).'</option>';
-          }
-        ?>
-      </select>
-      <button type="submit">Search</button>
-      <a class="btn" href="search.php">Reset</a>
-    </form>
-  </div>
-</section>
-
-<main>
-  <section class="section">
-    <div class="section-header">
-      <h3>Search results</h3>
-      <div class="pill-row">
-        <span class="pill"><strong><?= $total ?></strong> recipes</span>
-        <?php if ($q !== ''): ?>
-          <span class="pill">Keyword: “<?= htmlspecialchars($q) ?>”</span>
-        <?php endif; ?>
-        <?php if (strcasecmp($cat, 'all') !== 0): ?>
-          <span class="pill">Category: <?= htmlspecialchars($cat) ?></span>
-        <?php endif; ?>
+  <!-- top strip + header (same as home) -->
+  <div class="top-strip">
+    <header class="site">
+      <div class="brand">
+        <div>Forkfolio</div>
       </div>
-    </div>
-  </section>
+      <nav class="links">
+        <a href="index.php">Home</a>
+        <a href="search.php" class="active">Find Recipes</a>
+        <a href="help.php">Help</a>
+        <a href="add.php">Add Recipe</a>
+      </nav>
+    </header>
 
-  <?php if ($total === 0): ?>
-    <div class="empty">
-      <h2 style="margin:0 0 8px;">No recipes found</h2>
+    <!-- hero with search bar and filters -->
+    <section class="hero hero-search">
+      <div class="hero-row">
+        <div>
+          <h2>Find a recipe</h2>
+          <p>Search by keyword and narrow by category to explore your Forkfolio.</p>
+        </div>
 
-      <?php if ($q !== '' || strcasecmp($cat,'all')!==0): ?>
-        <p>
-          Your search
-          <?= $q !== '' ? 'for “<strong>'.htmlspecialchars($q).'</strong>” ' : '' ?>
-          <?= (strcasecmp($cat,'all')!==0) ? 'in <strong>'.htmlspecialchars($cat).'</strong> ' : '' ?>
-          returned no results.
-        </p>
-      <?php else: ?>
-        <p>You don’t have any recipes that match this filter yet.</p>
+        <form class="search" method="get" action="search.php">
+          <input
+            type="text"
+            name="q"
+            placeholder="Search recipes…"
+            value="<?= htmlspecialchars($q) ?>"
+          >
+          <select name="cat">
+            <?php
+              foreach ($cats as $c) {
+                $value = $c;
+                $label = ($c === 'all') ? 'All categories' : $c;
+                $sel   = (strcasecmp($c, $cat) === 0) ? 'selected' : '';
+                echo '<option value="'.htmlspecialchars($value).'" '.$sel.'>'.htmlspecialchars($label).'</option>';
+              }
+            ?>
+          </select>
+          <button type="submit">Search</button>
+          <a class="btn" href="search.php">Reset</a>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- main content: styled the same way as index.php -->
+  <main>
+    <!-- summary + filters section (mirrors index.php structure) -->
+    <section class="section">
+      <div class="section-header">
+        <h3>
+          <?php if ($q === '' && (strtolower($cat) === 'all')): ?>
+            Browse all recipes
+          <?php else: ?>
+            Search results
+          <?php endif; ?>
+        </h3>
+
+        <div class="pill-row">
+          <span class="pill"><strong><?= $total ?></strong> recipes</span>
+
+          <?php if ($q !== ''): ?>
+            <span class="pill">Keyword: “<?= htmlspecialchars($q) ?>”</span>
+          <?php endif; ?>
+
+          <?php if (strcasecmp($cat, 'all') !== 0): ?>
+            <span class="pill">Category: <?= htmlspecialchars($cat) ?></span>
+          <?php endif; ?>
+        </div>
+      </div>
+
+      <!-- category chips so the user can quickly jump between filters -->
+      <?php if (!empty($categories)): ?>
+        <div class="chips">
+          <?php
+            $isAllActive = (strtolower($cat) === 'all');
+            $qParam      = $q !== '' ? '&q=' . urlencode($q) : '';
+          ?>
+          <a
+            class="chip"
+            href="search.php?cat=all<?= $qParam ?>"
+            style="<?= $isAllActive ? 'border-color:var(--accent); color:var(--ink); font-weight:600;' : '' ?>"
+          >All</a>
+
+          <?php foreach ($categories as $c): ?>
+            <?php
+              $active = (strcasecmp($c, $cat) === 0);
+              $url    = 'search.php?cat=' . urlencode($c) . $qParam;
+            ?>
+            <a
+              class="chip"
+              href="<?= $url ?>"
+              style="<?= $active ? 'border-color:var(--accent); color:var(--ink); font-weight:600;' : '' ?>"
+            >
+              <?= htmlspecialchars($c) ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
       <?php endif; ?>
+    </section>
 
-      <ol style="text-align:left; max-width:600px; margin: 12px auto 0;">
-        <li>Try a broader word (e.g., “chicken” instead of “ancho”).</li>
-        <li>Clear category filters and search again.</li>
-        <li>Search by an ingredient that’s definitely in the recipe.</li>
-      </ol>
+    <!-- empty state if there are no matches -->
+    <?php if ($total === 0): ?>
+      <div class="empty">
+        <h2>No recipes found</h2>
 
-      <p style="margin-top:18px;">
-        <a class="btn" href="search.php">Reset filters</a>
-        <a class="btn" href="index.php" style="background:var(--accent-2); border-color:var(--accent-2); color:#333;">Back to Home</a>
-      </p>
-    </div>
-  <?php else: ?>
-    <div class="grid">
-      <?php foreach ($results as $r): ?>
-        <article class="card">
-          <h4 class="title"><?= htmlspecialchars($r['title']) ?></h4>
-
-          <p class="meta">
-            <?= htmlspecialchars($r['category']) ?>
-            <?php if (!empty($r['cook_time'])): ?>
-              · <?= htmlspecialchars($r['cook_time']) ?>
+        <?php if ($q !== '' || strcasecmp($cat,'all')!==0): ?>
+          <p>
+            Your search
+            <?php if ($q !== ''): ?>
+              for “<strong><?= htmlspecialchars($q) ?></strong>”
             <?php endif; ?>
-            <?php if (!empty($r['difficulty'])): ?>
-              · <?= htmlspecialchars($r['difficulty']) ?>
+            <?php if (strcasecmp($cat,'all')!==0): ?>
+              in <strong><?= htmlspecialchars($cat) ?></strong>
             <?php endif; ?>
+            returned no results.
           </p>
+        <?php else: ?>
+          <p>You don’t have any recipes that match this filter yet.</p>
+        <?php endif; ?>
 
-          <?php if (!empty($r['description'])): ?>
-            <p><?= htmlspecialchars($r['description']) ?></p>
-          <?php endif; ?>
+        <ol class="empty-tips">
+          <li>Try a broader word (e.g., “chicken” instead of “ancho”).</li>
+          <li>Clear category filters and search again.</li>
+          <li>Search by an ingredient that’s definitely in the recipe.</li>
+        </ol>
 
-          <?php if (!empty($r['ingredients'])): ?>
-            <p style="margin-top:6px; font-size:13px;">
-              <strong>Ingredients preview:</strong><br>
-              <?= nl2br(htmlspecialchars($r['ingredients'])) ?>
+        <p class="empty-actions">
+          <a class="btn" href="search.php">Reset filters</a>
+          <a class="btn" href="index.php">Back to Home</a>
+        </p>
+      </div>
+
+    <?php else: ?>
+      <!-- extra section heading like index.php -->
+      <div class="section">
+        <h3>All recipes</h3>
+      </div>
+
+      <!-- results grid: same card structure + classes as index.php -->
+      <div class="grid">
+        <?php foreach ($results as $r): ?>
+          <?php $finalImg = get_final_image_for_recipe($r['id']); ?>
+          <article class="card">
+            <?php if ($finalImg): ?>
+              <div class="card-thumb">
+                <img
+                  src="<?= htmlspecialchars($finalImg) ?>"
+                  alt="<?= htmlspecialchars($r['title']) ?>"
+                >
+              </div>
+            <?php endif; ?>
+
+            <h4 class="title"><?= htmlspecialchars($r['title']) ?></h4>
+
+            <p class="meta">
+              <?= htmlspecialchars($r['category']) ?>
             </p>
-          <?php endif; ?>
 
-          <div style="margin-top:8px;">
-            <a class="btn primary" href="recipe.php?id=<?= (int)$r['id'] ?>">View</a>
-          </div>
-        </article>
-      <?php endforeach; ?>
-    </div>
-  <?php endif; ?>
-</main>
+            <div class="card-actions">
+              <a class="btn primary" href="recipe.php?id=<?= (int)$r['id'] ?>">View</a>
+            </div>
+          </article>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </main>
 
-<footer>
-  Cookbook · IDM 232
-</footer>
+  <footer>
+    Forkfolio · IDM 232-rem357
+  </footer>
 
 </body>
 </html>

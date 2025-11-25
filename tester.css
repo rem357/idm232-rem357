@@ -1,0 +1,248 @@
+/* ================================
+   forkfolio header + hero
+================================ */
+
+/* full grey strip at top */
+.top-strip {
+  background: #d7d7d7;
+  color: #111;
+  padding: 20px 0 10px;
+  margin: 0;
+  width: 100%;
+}
+
+/* main header: logo group left, nav overlaid top-right */
+.forkfolio-header {
+  position: relative;              /* so nav can be absolutely positioned inside */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 40px 20px;          /* extra bottom padding so nav has breathing room */
+  box-sizing: border-box;
+}
+
+/* left group: icon + logo/text */
+.forkfolio-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1 1 auto;                  /* allow this side to shrink a bit */
+}
+
+/* plate icon */
+.forkfolio-icon img {
+  display: block;
+  width: 260px;
+  height: auto;
+}
+
+/* stacked text for logo */
+.forkfolio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* “welcome to” — Italianno */
+.forkfolio-welcome {
+  font-family: "Italianno", cursive;
+  font-size: 40px;
+  line-height: 1;
+}
+
+/* “Forkfolio” — Jacques Francois Shadow */
+.forkfolio-logo {
+  display: inline-block;
+  font-family: "Jacques Francois Shadow", serif;
+  font-size: 96px;
+  line-height: 0.95;
+  white-space: nowrap;
+}
+
+/* tagline — Jeju Myeongjo */
+.forkfolio-tagline {
+  display: inline-block;
+  margin: 6px 0 0;
+  font-family: "Jeju Myeongjo", serif;
+  font-size: 22px;
+  width: 100%;
+}
+
+/* nav pinned to the top-right of the header */
+.forkfolio-nav {
+  position: absolute;
+  top: 0;
+  right: 40px;                     /* lines up with header padding */
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;                 /* if it runs out of room, wrap instead of overflow */
+  justify-content: flex-end;
+  max-width: calc(100% - 80px);    /* never extend past the header’s left padding */
+}
+
+.forkfolio-nav a {
+  font-family: "Jeju Myeongjo", serif;
+  font-size: 18px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: #e4e4e4;
+  color: #333;
+  border: 1px solid #b0b0b0;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+  white-space: nowrap;             /* each button stays on one line */
+}
+
+.forkfolio-nav a:hover {
+  background: #f2f2f2;
+}
+
+.forkfolio-nav a.active {
+  background: #ffffff;
+}
+
+/* hero directly under header (just the search bar now) */
+.hero {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px 16px;
+  background: transparent;
+  border: none;
+  box-sizing: border-box;
+}
+
+.hero-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;   /* search lines up under nav on desktop */
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* hide old “hello there” block for this layout */
+.hero-copy {
+  display: none;
+}
+
+/* search bar */
+.search {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.search input[type="text"] {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  min-width: 260px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.search button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent, #de591c);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.search button:hover {
+  opacity: 0.9;
+}
+
+/* ================================
+   responsive behavior
+================================ */
+
+/* TABLET: center everything, nav below logo, search centered under that */
+@media (max-width: 1000px) {
+  .forkfolio-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px 24px 20px;
+  }
+
+  .forkfolio-left {
+    justify-content: center;
+  }
+
+  .forkfolio-icon img {
+    width: 220px;
+  }
+
+  .forkfolio-text {
+    align-items: center;
+  }
+
+  .forkfolio-logo {
+    font-size: 72px;
+  }
+
+  .forkfolio-tagline {
+    font-size: 20px;
+  }
+
+  /* nav stops being absolute and stacks nicely */
+  .forkfolio-nav {
+    position: static;
+    margin-top: 12px;
+    justify-content: center;
+    max-width: 100%;
+  }
+
+  .hero {
+    padding: 8px 24px 16px;
+  }
+
+  .hero-row,
+  .search {
+    justify-content: center;
+  }
+}
+
+/* MOBILE: icon on top, then text, nav, then search */
+@media (max-width: 600px) {
+  .forkfolio-header {
+    padding: 12px 16px 20px;
+  }
+
+  .forkfolio-left {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .forkfolio-icon img {
+    width: 180px;
+  }
+
+  .forkfolio-logo {
+    font-size: 56px;
+  }
+
+  .forkfolio-tagline {
+    font-size: 18px;
+  }
+
+  .forkfolio-nav {
+    margin-top: 10px;
+  }
+
+  .hero {
+    padding: 8px 16px 16px;
+  }
+
+  .search input[type="text"] {
+    min-width: 0;
+    width: 100%;
+  }
+}
